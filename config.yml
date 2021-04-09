@@ -1,0 +1,5 @@
+- pipeline_name: successfull_payments
+  count: 3
+
+- pipeline_name: failed_payments
+  count: 5

@@ -1,0 +1,35 @@
+- pipeline_name: successfull_payments
+  pipeline_type: stan
+  input:
+    connection_string: localhost:9000
+    buffer:
+      size: 1000
+      events: 20
+  transform:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
+  output:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
+
+- pipeline_name: failed_payments
+  pipeline_type: stan
+  input:
+    connection_string: localhost:9000
+    buffer:
+      size: 1000
+      events: 20
+  transform:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
+  output:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
