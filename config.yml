@@ -1,5 +1,25 @@
 - pipeline_name: successfull_payments
-  count: 3
+  pipeline_type: stan
+  transform:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
+  output:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
 
 - pipeline_name: failed_payments
-  count: 5
+  pipeline_type: stan
+  transform:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
+  output:
+    workers: 3
+    buffer:
+      size: 2000
+      events: 40
