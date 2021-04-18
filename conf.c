@@ -32,9 +32,8 @@ enum value_state {
 };
 
 enum pipe_config_state {
-    START,
+    CONFIG_ROOT,
     ACCEPT_PIPELINE,
-    FINISH_PIPELINE,
     ACCEPT_PIPELINE_NAME,
     ACCEPT_PIPELINE_TYPE,
     ACCEPT_TRANSFORM,
@@ -92,7 +91,7 @@ int setPipeline(struct parser_state *s, yaml_event_t *event)
             break;
         case YAML_MAPPING_END_EVENT:
             /* Pileline options are finished. */
-            s->value_state = FINISH_PIPELINE;
+            s->value_state = CONFIG_ROOT;
             s->accepted = 1;
             break;
         default:
@@ -216,8 +215,7 @@ int consume_event(struct parser_state *s, yaml_event_t *event)
 {
     s->accepted = 0;
     switch (s->pipe_state) {
-    case START:
-    case FINISH_PIPELINE:
+    case CONFIG_ROOT:
         switch (event->type) {
         case YAML_STREAM_START_EVENT:
             /* Parser initialized. */
@@ -299,7 +297,7 @@ int parse_config(char *config_path)
 {
     yaml_parser_t parser;
     yaml_event_t event;
-    struct parser_state value_state = {.pipe_state=START, .value_state=WAIT_DIRECTIVE, .accepted=0, .error=0};
+    struct parser_state value_state = {.pipe_state=CONFIG_ROOT, .value_state=WAIT_DIRECTIVE, .accepted=0, .error=0};
     pipe_config data[64];
     int i = 0;
 
