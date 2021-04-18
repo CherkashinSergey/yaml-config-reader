@@ -61,7 +61,7 @@ struct parser_state {
     union nested_config_state nested_state;
     int accepted;
     int error;
-    pipe_config data;
+    pipe_config *data;
 };
 
 int setPipeline(struct parser_state *s, yaml_event_t *event)
@@ -112,10 +112,10 @@ int setPipeline(struct parser_state *s, yaml_event_t *event)
             switch (s->pipe_state)
             {
             case ACCEPT_PIPELINE_NAME:
-                s->data.name = strdup(value);
+                s->data->name = strdup(value);
                 break;
             case ACCEPT_PIPELINE_TYPE:
-                s->data.type = strdup(value);
+                s->data->type = strdup(value);
                 break;
             default:
                 break;
@@ -125,7 +125,7 @@ int setPipeline(struct parser_state *s, yaml_event_t *event)
     }
 }
 
-int setTransform(struct parser_state *s, yaml_event_t *event, stage_config *config)
+int setStage(struct parser_state *s, yaml_event_t *event, stage_config *config)
 {
     if (s->value_state == ACCEPT_KEY){
         char *key = NULL;
@@ -193,7 +193,6 @@ int setTransform(struct parser_state *s, yaml_event_t *event, stage_config *conf
             switch (s->nested_state.stage)
             {
             case WORKERS:
-                //s->data.transform.workers_count = atoi(s->value);
                 config->workers_count = atoi(value);
                 s->nested_state.stage = STAGE_ROOT;
                 break;
@@ -230,7 +229,7 @@ int consume_event(struct parser_state *s, yaml_event_t *event)
             break;
         case YAML_MAPPING_START_EVENT:
             s->pipe_state = ACCEPT_PIPELINE;
-            /* TODO: allocate memory for new pipeline config. */
+            s->data = malloc(sizeof(pipe_config));
             break;
         case YAML_STREAM_END_EVENT:
             s->pipe_state = STOP;
@@ -249,11 +248,11 @@ int consume_event(struct parser_state *s, yaml_event_t *event)
         break;
     case ACCEPT_TRANSFORM:
         /* Transform config starts with key name. */
-        setTransform(s, event, &s->data.transform);
+        setStage(s, event, &s->data->transform);
         break;
     case ACCEPT_OUTPUT:
         /* Transform config starts with key name. */
-        setTransform(s, event, &s->data.output);
+        setStage(s, event, &s->data->output);
         break;
     case ERROR:
     case STOP:
@@ -290,8 +289,9 @@ int print_config(pipe_config *cfg)
 
 int free_value_state(struct parser_state *ps)
 {
-    free(ps->data.name);
-    free(ps->data.type);
+    free(ps->data->name);
+    free(ps->data->type);
+    free(ps->data);
     memset(ps, 0, sizeof(struct parser_state));
 }
 
@@ -317,7 +317,7 @@ int parse_config(char *config_path)
             goto error;
         }
         if (value_state.accepted && i < sizeof(data)/sizeof(*data)) {
-            print_config(&value_state.data);
+            print_config(value_state.data);
             free_value_state(&value_state);
             i++;
         }
