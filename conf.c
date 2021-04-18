@@ -273,11 +273,11 @@ int print_config(pipe_config *cfg)
            "    buffer:\n"
            "      size: %ld\n"
            "      events: %ld\n"
-           "  output:\n"
-           "    workers: %d\n"
-           "    buffer:\n"
-           "      size: %ld\n"
-           "      events: %ld\n",
+           "output:\n"
+           "  workers: %d\n"
+           "  buffer:\n"
+           "    size: %ld\n"
+           "    events: %ld\n",
            cfg->name, cfg->type,
            cfg->transform.workers_count, cfg->transform.buffer.size, cfg->transform.buffer.events_count,
            cfg->output.workers_count, cfg->output.buffer.size, cfg->output.buffer.events_count
