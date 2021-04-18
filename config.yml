@@ -3,23 +3,23 @@
   transform:
     workers: 3
     buffer:
-      size: 2000
-      events: 40
+      size: 1234
+      events: 12
   output:
-    workers: 3
+    workers: 7
     buffer:
-      size: 2000
-      events: 40
+      size: 5678
+      events: 34
 
 - pipeline_name: failed_payments
   pipeline_type: stan
   transform:
-    workers: 3
+    workers: 4
     buffer:
-      size: 2000
-      events: 40
+      size: 4321
+      events: 14
   output:
-    workers: 3
+    workers: 5
     buffer:
-      size: 2000
-      events: 40
+      size: 8765
+      events: 88
